@@ -1,0 +1,71 @@
+CREATE TABLE SalesMan
+(
+  Salesman_Id int not null  primary key,
+  Salesman_Name varchar(50),
+  Salesman_City varchar(50),
+  Commision money
+
+);
+SELECT * FROM SalesMan
+INSERT INTO SalesMan(Salesman_Id,Salesman_Name,Salesman_City, Commision) 
+VALUES
+
+(5,'sam','Delhi',2000),
+(6,'Tej','Mumbai',1000),
+(7,'Venu','Chennai',2000);
+SELECT * FROM Salesman
+CREATE TABLE Customers
+(
+ Customer_ID int not null primary key,
+ Customer_name varchar(50),
+ City varchar(50),
+ Grade varchar(40),
+ Salesman_Id int foreign key references SalesMan(Salesman_Id)
+
+
+);
+select * from Customers
+insert into Customers(Customer_ID,Customer_name,City,Grade,Salesman_Id)
+VALUES 
+(1,'Venkat','Hyd','a',1),
+(2,'Siddu','Hyd','a',2),
+(3,'Gopi','Hyd','b',3),
+(4,'Ramu','Guntur','b',4),
+(5,'Suresh','Guntur','b',5),
+(6,'Pavan','Guntur','b',6),
+(7,'Kalyan','Hyd','c',7);
+
+SELECT * FROM  Customers
+CREATE TABLE OrdersOfTheCustomers
+( Order_No int ,
+  Purchase_amount money,
+  OrderDate date,
+  Customer_ID int ,
+  Salesman_Id int 
+
+
+);
+INSERT INTO OrdersOfTheCustomers(Order_No,Purchase_amount,OrderDate,Customer_ID,Salesman_Id)
+VALUES 
+(1,2000,'2020-8-19',1,1),
+(2,3000,'2020-9-19',2,2),
+(3,3000,'2020-10-19',3,3),
+(4,4000,'2020-11-19',4,4),
+(5,5000,'2020-4-19',5,5),
+(6,6000,'2020-8-19',6,6),
+(7,7000,'2020-8-19',7,7),
+(8,8000,'2020-8-19',8,8);
+SELECT * FROM OrdersOfTheCustomers
+SELECT * FROM Customers
+select * from SalesMan
+--question 3
+SELECT s.Salesman_Name ,c.Customer_name FROM SalesMan s inner join Customers c ON  s.Salesman_Id=c.Salesman_Id
+--question 2
+SELECT o.Order_No,o.Purchase_amount,c.Customer_name,c.city FROM OrdersOfTheCustomers o join Customers c on o.Salesman_Id=c.Salesman_Id
+ WHERE o.Purchase_amount between 3000 and 6000
+ --question 1
+ SELECT s.Salesman_Name,s.Salesman_city,c.Customer_name,c.City FROM SalesMan s inner join Customers c on s.Salesman_Id=c.Salesman_id
+ where c.City='Hyd' and s.Salesman_City = 'Hyd';
+ -- quesation 1
+ SELECT s.Salesman_Name,s.Salesman_city,c.Customer_name,c.City FROM SalesMan s , Customers c 
+ WHERE s.Salesman_City=c.City
