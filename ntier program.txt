@@ -1,0 +1,181 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace BusinessLayer
+{
+    public class JoinTables
+    {
+        public string connectionstring = string.Empty;
+        public DataTable Join()
+        {
+            connectionstring="Data Source=192.168.50.95;Initial Catalog=vgudipati;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+            DataTable table = new DataTable();
+            using (SqlConnection connection=new SqlConnection(connectionstring))
+            {
+                var query= "SELECT o.Order_No,o.Purchase_amount,c.Customer_name,c.city FROM OrdersOfTheCustomers o join Customers c on o.Salesman_Id=c.Salesman_Id WHERE o.Purchase_amount between 3000 and 6000";
+                using (SqlCommand cmd=new SqlCommand(query, connection))
+                {
+                    using (SqlDataAdapter adapter=new SqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(table);
+
+                    }
+
+                }
+
+
+            }
+            return table;
+
+        }
+    }
+}
+========================
+main program
+=============
+using Microsoft.SqlServer.Server;
+using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using BusinessAccessLayer;
+
+namespace NTierArchitecture
+{
+    class Program
+    {
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Enter EmpId to see the details:");
+            var empId = Console.ReadLine().ToString();
+            DataSet dataSet = new DataSet();
+            try
+            {
+                dataSet = new EmployeeAddressDetails().GetEmployeeAddressDetails(empId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error occured. " + ex.ToString());
+            }
+
+            foreach (DataRow row in dataSet.Tables[0].Rows)
+            {
+                Console.WriteLine(row["EmpId"] + " | " + row["Name"] + " | " + row["Salary"]);
+            }
+
+            foreach (DataRow row in dataSet.Tables[1].Rows)
+            {
+                Console.WriteLine(row["Address1"] + " | " + row["Address2"] + " | " + row["City"]);
+            }
+        }
+
+
+    }
+}
+=============
+DAl
+=============
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace DataAccessLayer
+{
+    public class AddressesDAL
+    {
+        static string _connStr = ConfigurationManager.ConnectionStrings["ConnStr"].ConnectionString;
+
+        public DataTable FindAddress(string empId)
+        {
+            DataTable table = new DataTable();
+            using (SqlConnection conn = new SqlConnection(_connStr))
+            {
+                string sql = "SELECT * FROM Addresses WHERE EmpId = @empId";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@empId", empId);
+                    using (SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(table);
+                    }
+                }
+            }
+            return table;
+        }
+    }
+}
+===============
+dal
+===============
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace DataAccessLayer
+{
+    public class AddressesDAL
+    {
+        static string _connStr = ConfigurationManager.ConnectionStrings["ConnStr"].ConnectionString;
+
+        public DataTable FindAddress(string empId)
+        {
+            DataTable table = new DataTable();
+            using (SqlConnection conn = new SqlConnection(_connStr))
+            {
+                string sql = "SELECT * FROM Addresses WHERE EmpId = @empId";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@empId", empId);
+                    using (SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(table);
+                    }
+                }
+            }
+            return table;
+        }
+    }
+}
+===============bal===========
+using System;
+using System.Data;
+using DataAccessLayer;
+
+namespace BusinessAccessLayer
+{
+    public class EmployeeAddressDetails
+    {
+        public DataSet GetEmployeeAddressDetails(string empId)
+        {
+            EmployeeDAL dal = new EmployeeDAL();
+            var table = dal.FindEmployees(empId);
+            
+
+            AddressesDAL addressesDAL = new AddressesDAL();
+            var tableAddress = addressesDAL.FindAddress(empId);
+            
+          
+            DataSet dataSet = new DataSet();
+            dataSet.Tables.Add(table);
+            dataSet.Tables.Add(tableAddress);
+            return dataSet;
+        }
+    }
+}
+

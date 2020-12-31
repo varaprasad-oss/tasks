@@ -1,0 +1,158 @@
+using System;
+using System.Data;
+
+using System.Configuration;
+using System.Data.SqlClient;
+
+namespace exam
+{
+    class Program
+    {
+        static string _connStr = string.Empty;
+
+        public static void Main(string[] args)
+        {
+            _connStr = ConfigurationManager.ConnectionStrings["_ConnStr"].ConnectionString;
+
+
+            Console.WriteLine("ADO.NET Example in .NET Core");
+            Console.WriteLine("=============================");
+
+           List();
+        // ListWithSP();
+        // Insert();
+
+        }
+
+       /*  public static void Insert()
+          {
+              using (SqlConnection conn = new SqlConnection(_connStr))
+              {
+                  using (SqlCommand cmd = new SqlCommand("kln", conn))
+                  {
+                      SqlParameter[] prms = new SqlParameter[4];
+                      prms[0] = new SqlParameter("@vendorid", SqlDbType.Int);
+                      prms[0].Value = 29;
+                      prms[1] = new SqlParameter("@vendorname", SqlDbType.VarChar, 15);
+                      prms[1].Value = "sandhya";
+                      prms[2] = new SqlParameter("@vendorcity", SqlDbType.VarChar,15);
+                      prms[2].Value = "tirupathi";
+                      prms[3] = new SqlParameter("@vendorstate", SqlDbType.VarChar, 15);
+                      prms[3].Value = "chitoor";
+                      //prms[4] = new SqlParameter("@Active", SqlDbType.Int);
+                      //prms[4].Value = "1";
+                      
+
+                      cmd.Parameters.AddRange(prms);
+                      cmd.CommandType = CommandType.StoredProcedure;
+                      conn.Open();
+                      cmd.ExecuteNonQuery();
+                      conn.Close();
+                  }
+              }
+          } */
+
+       /*  private static void ListWithSP()
+          {
+              Console.WriteLine("Which vendor id records you want to list?");
+              var vendrid =Convert.ToInt32(Console.ReadLine());
+
+              //string connStr = "Server=D1DGQLH2;Database=Training2020;User Id=training2020;Password=training2020;";
+
+              // connect to the database
+              SqlConnection conn = new SqlConnection(_connStr);
+
+              // create a command to execute
+              var sql = "xyz";
+
+              SqlCommand cmd = new SqlCommand(sql, conn);
+              SqlDataAdapter ad = new SqlDataAdapter(cmd);
+              DataTable table = new DataTable();
+
+              try
+              {
+                  conn.Open();
+                  // hold the data retrieved from the database
+                  // cmd.Parameters.AddWithValue("@departmentId", 2);
+
+                  SqlParameter[] prms = new SqlParameter[1];
+                  prms[0] = new SqlParameter("@vendorid", SqlDbType.Int);
+                  prms[0].Value = vendrid;
+
+                  cmd.Parameters.AddRange(prms);
+                  cmd.CommandType = CommandType.StoredProcedure;
+                  ad.Fill(table);
+                  conn.Close();
+                  // iterate through the table to list the data
+                  foreach (DataRow row in table.Rows)
+                  {
+                      Console.WriteLine(row["vendorid"] + " | " + row["vendorname"] + " |" + row["vendorcity"] + " |" + row["vendorstate"]);
+                  }
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine("Sorry, an error occured." + ex.Message);
+              }
+              finally
+              {
+                  // close the connection
+                  table.Dispose();
+                  ad.Dispose();
+                  cmd.Dispose();
+                  conn.Close();
+              }
+          }   */
+
+       private static void List()
+        {
+            Console.WriteLine("Which department id records you want to list?");
+            var veid = Console.ReadLine();
+
+          //  string connStr = "Data Source=DESKTOP-7SUECSL;Initial Catalog=master;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+           string connStr = ConfigurationManager.ConnectionStrings["_ConnStr"].ConnectionString;
+
+            // connect to the database
+            SqlConnection conn = new SqlConnection(connStr);
+
+            // create a command to execute
+            var sql = "SELECT * FROM mcnvendors WHERE vendorid = @vendorid";
+
+            SqlCommand cmd = new SqlCommand(sql, conn);
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+
+            try
+            {
+                conn.Open();
+                // hold the data retrieved from the database
+                // cmd.Parameters.AddWithValue("@departmentId", 2);
+
+                SqlParameter[] prms = new SqlParameter[1];
+                prms[0] = new SqlParameter("@vendorid", SqlDbType.Int);
+                prms[0].Value = veid;
+
+                cmd.Parameters.AddRange(prms);
+
+                ad.Fill(table);
+                conn.Close();
+                // iterate through the table to list the data
+                foreach (DataRow row in table.Rows)
+                {
+                    Console.WriteLine(row["vendorid"] + " | " + row["vendorname"] + " |" + row["vendorcity"] + " |" + row["vendorstate"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Sorry, an error occured." + ex.Message);
+            }
+            finally
+            {
+                // close the connection
+                table.Dispose();
+                ad.Dispose();
+                cmd.Dispose();
+                conn.Close();
+            }
+        }  
+    }  
+}

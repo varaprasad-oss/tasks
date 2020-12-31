@@ -1,0 +1,75 @@
+NET framework to create Windows desktop applications and server based applications.
+ This includes ASP.NET web applications. 
+. NET Core is used to create server applications that run on Windows, Linux and Mac. 
+It does not currently support creating desktop applications with a user interface.
+There are two supported .NET implementations for building server-side apps:
+ .NET Framework and .NET 5 (including .NET Core). Both share many of the same components and you can share code across the two. However, there are fundamental differences between the two and your choice depends on what you want to accomplish. This article provides guidance on when to use each.
+=================================
+Use .NET 5 for your server application when:
+========================
+
+You have cross-platform needs.
+You're targeting microservices.
+You're using Docker containers.
+You need high-performance and scalable systems.
+You need side-by-side .NET versions per application.
+========================================
+Use .NET Framework for your server application when:
+===============================================
+
+Your app currently uses .NET Framework (recommendation is to extend instead of migrating).
+Your app uses third-party .NET libraries or NuGet packages not available for .NET 5.
+Your app uses .NET technologies that aren't available for .NET 5.
+Your app uses a platform that doesn't support .NET 5.
+   =======================
+
+In 2002, Microsoft released .NET Framework 1.0 as a proprietary software framework for Windows platform.
+It has been updating the .NET Framework regularly to meet the emerging trends in software development. 
+But Microsoft recently redesigned the core architecture of the .NET Framework to simplify development, testing,
+and deployment of modern software applications. The company released .NET Core 1.0 in June, along with ASP.NET Core 1.0 and Entity Framework.
+
+    Unlike .NET Framework, .NET Core is both open source and cross-platform. It further comes with several new features to 
+simplify development and testing of desktop, web, cloud, and mobile applications. Also, it allows developers to deploy the applications
+ in a number of ways. But .NET Core does not support all features and functionalities of .NET Framework. Hence, it becomes essential 
+for developers to understand the major differences between .NET Framework and .NET Core before switching to the most recent version of
+the popular software framework.
+
+Understanding Major Differences between .NET Core and .NET Framework..........................
+
+Open Source: 
+           .NET Framework was releases as a licensed and proprietary software framework. Microsoft subsequently made certain components
+of .NET Framework open source. But the company has released .NET Core as an open source software framework. Hence, both enterprise and 
+individual developers can build apps with .NET Core without paying any licensing fees.
+
+Cross-Platform: 
+            .NET Framework enabled developers to build applications for a single platform — Windows. But .NET Core is cross-platform, and supports
+ three distinct operating systems — Windows, OS X, and Linux. The compatibility makes it easier for developers to build cross-platform 
+applications, and port their existing applications from one platform to another.
+
+Installation: 
+            The .NET Framework needs to be installed as a single package and runtime environment for Windows. But .NET Core is cross-platform,
+ and needs to be packaged and installed independent of the underlying operating system. The developers are required to compile Nuget packages 
+included in .NET Core. Also, they can compile the Nuget packages directly into the application or place them in a folder inside the application.
+
+Modular Collection of Libraries: 
+                               Both .NET Framework and .NET Core allows developers to take advantage of robust class libraries. But .NET Core 
+uses a redesigned common language runtime called CoreCLR, and features a modular collection of libraries called CoreFX. Hence, the developers 
+have option to pick and use only the libraries required by each application, and enhance the application’s performance by removing unnecessary 
+libraries.
+
+Compatibility: 
+             .NET Core does not support all the features and functionalities provided by the latest version of .NET Framework. But it can be 
+used as a subset of the .NET Framework. Also, .NET Core is still compatible with .NET Framework through the .NET Standard Library. Hence, the 
+developers can still run the applications developed with .NET Framework after upgrading to .NET Core.
+Developers Should Use .NET Framework When…
+.NET Framework is what is distributed with Windows. Generally, it is used to build desktop Windows apps and large-scale enterprise applications using .NET workflow and data connection tools.
+
+It provides services that include:
+
+Memory management
+Type and memory safety
+Security
+Networking
+Application deployment
+Data structures
+APIs

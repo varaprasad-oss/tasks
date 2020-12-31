@@ -1,0 +1,99 @@
+**********************************************
+//PARTIAL VIEW  in .netcore mvc
+====
+@{
+    ViewData["Title"] = "_partial";
+    Layout = "";
+}
+
+<h1>_partial</h1>
+<p> The partaial view name starts with the _(underScore)</p>
+<p>the partial view can be created in the shared floder</p>
+<p>The Partial view  implementation </p>
+====
+//call the partial view in any where or index 
+===
+<partial name="_partial" />
+============ACCESSING THE FROM SHARED FOLDER
+@{
+    ViewData["Title"] = "PartialViewTest";
+}
+<h1>Partial View Test</h1>
+
+<h3>Partial view from ~/Shared folder</h3>
+<code>@Html.Raw(Html.Encode("<partial name=\"_CurrentDateTime\" />"))</code>
+<partial name="_CurrentDateTime" />
+
+<code>@@await Html.PartialAsync("_CurrentDateTime")</code>
+@await Html.PartialAsync("_CurrentDateTime")
+
+<code>@@{ await Html.RenderPartialAsync("_CurrentDateTime"); }</code>
+@{
+    await Html.RenderPartialAsync("_CurrentDateTime");
+}\
+
+<hr />
+============================= ACCESING FROM ANY WHERE 
+<h3>Partial view from ~/Other views folder</h3>
+<code>@Html.Raw(Html.Encode("<partial name=\"_DefaultPartial\" />"))</code>
+<partial name="_DefaultPartial" />
+
+<code>@@await Html.PartialAsync("~/Views/Home/_HomePartial.cshtml")</code>
+@await Html.PartialAsync("~/Views/Home/_HomePartial.cshtml")
+<hr />
+<h3>Partial View with Model</h3>
+<code>
+    @@{ await Html.RenderPartialAsync("_PartialViewWithModel", "Partial View Tutorials");}
+</code>
+@{
+    await Html.RenderPartialAsync("_PartialViewWithModel", "Partial View Tutorials");
+}
+
+*****************************************************
+ROUTING IN MVC CORE 
+
+                endpoints.MapGet("/Hello", async context =>
+                {
+                    // await context.Response.WriteAsync("Hello .NET Core MVC");
+                    
+                    context.Response.Redirect("https://www.dotnetfunda.com");
+                });
+
+                endpoints.MapControllerRoute(
+                    name: "ConstraintTest",
+                    pattern: "/Default/{id:int}/{username:minlength(4)}",
+                    defaults: new { controller = "Default", action = "Index" }
+                    );
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "Privacy",
+                    pattern: "/Privacy",
+                    defaults: new { controller = "Home", action = "Privacy" }
+                    );
+//CALLING IN THE SEARCH BAR USING /default/2/rama
+******************************************************************
+VIEW COMPONENT 
+@model IEnumerable<Person>
+
+    <div class="card card-body bg-success text-white">
+        This is from Component page
+        <table class="table table-bordered table-hover">
+            <tr><th>Name</th><th>Age</th></tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(item.FirstName + " " + item.LastName)</td>
+                    <td>@item.Age</td>
+                </tr>
+            }
+        </table>
+    </div>
+===========calling
+@await Component.InvokeAsync("People");
+
+
+

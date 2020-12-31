@@ -1,0 +1,175 @@
+using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace ADONET
+{
+    class Program
+    {
+        static string _connStr = string.Empty;
+
+        static void Main(string[] args)
+        {
+            _connStr = ConfigurationManager.ConnectionStrings["_ConnStr"].ConnectionString;
+
+            Console.WriteLine("ADO.NET Example in .NET Core");
+            Console.WriteLine("=============================");
+
+            
+
+            // ListMultipleResults();
+
+           // ListWithReaders();
+
+            //ListWithReaderWithMultipleResults();
+
+             UseOfTransactions();
+        }
+
+        /*   private static void ListWithReaders()
+           {
+               using (SqlConnection connection = new SqlConnection(_connStr))
+               {
+                   using (SqlCommand command = new SqlCommand("xyz", connection))
+                   {
+                       command.CommandType = CommandType.StoredProcedure;
+
+                       connection.Open();
+                       using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection))
+                       {
+                           while (reader.Read())
+                           {
+                               // Console.WriteLine(reader["EmpId"] + " | " + reader["Name"] + " |" + reader["Salary"] + reader["Gender"]);
+
+                               //Console.WriteLine(reader.GetString("EmpId") + " | " + reader.GetString("Name") + " |" + reader.GetDecimal("Salary") + reader["Gender"]);
+
+                               Console.WriteLine(reader.GetInt32(reader.GetOrdinal("vendorid")) + " | " + reader.GetString("vendorname") + " |" + reader.GetString("vendorcity") + " |" + reader.GetString("vendorstate"));
+                           }
+                           reader.Close();
+                       }
+                       // connection.Close();
+                   }
+               }
+           } */
+
+
+        /* private static void ListWithReaderWithMultipleResults()
+         {
+             using (SqlConnection connection = new SqlConnection(_connStr))
+             {
+                 using (SqlCommand command = new SqlCommand("xyz", connection))
+                 {
+                     command.CommandType = CommandType.StoredProcedure;
+
+                     connection.Open();
+                     using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection))
+                     {
+                         while (reader.Read())
+                         {
+                             Console.WriteLine(reader.GetInt32(reader.GetOrdinal("vendorid")) + " | " + reader.GetString("vendorname") + " |" + reader.GetString("vendorcity") + " |" + reader.GetString("vendorstate"));
+                         }
+
+                         reader.NextResult();
+
+                         while (reader.Read())
+                         {
+                             Console.WriteLine(reader.GetInt32(reader.GetOrdinal("invoiceid")) + " | " + reader.GetInt32("vendorid") + " |"  + reader.GetString("invoiceno"));
+                         }
+
+
+                     }
+                 }
+             }
+
+         } */
+
+        /* private static void ListMultipleResults()
+        {
+            DataSet dataSet = new DataSet();
+            using (SqlConnection connection = new SqlConnection(_connStr))
+            {
+                using (SqlCommand command = new SqlCommand("xyz", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    using (SqlDataAdapter ad = new SqlDataAdapter(command))
+                    {
+                        // connection.Open();
+                        ad.Fill(dataSet);
+                        // connection.Close();
+                    }
+                }
+            }
+
+            // list the records
+            Console.WriteLine("**** List Employees Table Data ******");
+            foreach (DataRow row in dataSet.Tables[0].Rows)
+            {
+                Console.WriteLine(row["vendorid"] + " | " + row["vendorname"] + " |" + row["vendorcity"] + row["vendorstate"]);
+            }
+
+            Console.WriteLine("**** List Addresses Table Data ******");
+            foreach (DataRow row in dataSet.Tables[1].Rows)
+            {
+                Console.WriteLine(row["invoiceid"] + " | " + row["vendorid"] + " |" + row["invoiceno"]);
+            }
+
+        } */
+
+        private static void UseOfTransactions()
+        {
+            using (SqlConnection connection = new SqlConnection(_connStr))
+            {
+                connection.Open();
+                var transaction = connection.BeginTransaction();
+                try
+                {
+                    // insert into departments
+                    var sql = "INSERT INTO mcnvendors(vendorid,vendorname,vendorcity,vendorstate,Active) VALUES (@vendorid,@vendorname,@vendorcity,@vendorstate,@Active) ";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@vendorname", "SQL Department");
+                        command.Parameters.AddWithValue("@vendorid", 789);
+                        command.Parameters.AddWithValue("@vendorcity", "pak");
+                        command.Parameters.AddWithValue("@vendorstate", "pik");
+                        command.Parameters.AddWithValue("@Active", 1);
+
+                        command.Transaction = transaction;
+                        command.ExecuteNonQuery();
+                    }
+
+                    // insert into subjects
+                      sql = "INSERT INTO Products (ProductID,Productcost,Productcolor) VALUES (@ProductID,@Productcost,@Productcolor)";
+                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@Productcost", 50000);
+                        command.Parameters.AddWithValue("@Productcolor", "light blue");
+                        command.Parameters.AddWithValue("@ProductID", 10001);
+                        //command.Parameters.AddWithValue("@invoicetotal", 500000);
+                        //command.Parameters.AddWithValue("@paymenttotal", 600000);
+                        //command.Parameters.AddWithValue("@creadittotal", 70000000);
+                        command.Transaction = transaction;
+                        command.ExecuteNonQuery();
+                    }
+
+
+                    transaction.Commit();
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine("Error occured. " + ex.ToString());
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+
+        }
+
+
+    }
+}

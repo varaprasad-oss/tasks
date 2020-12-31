@@ -1,0 +1,84 @@
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+
+namespace Linq
+{
+    class Program
+    {
+        public static string _connStr = string.Empty;
+        static void Main(string[] args)
+        {
+            Console.WriteLine("~~~**~~~LINQ Examples~~~**~~~");
+            _connStr = "Data Source = 192.168.50.95; Initial Catalog = gmekala; Integrated Security = True; Persist Security Info = False; Pooling = False; MultipleActiveResultSets = False; Encrypt = False; TrustServerCertificate = False";
+            var employeeResult = GetEmployees();
+            var data = employeeResult.FirstOrDefault();
+            //Console.WriteLine(data.EmpName+ "" +data.EmpId);
+            var data1 = employeeResult.Where(d=>d.EmpName.Contains("ganesh"));
+            var data2 = employeeResult.Reverse();
+            //Console.WriteLine(data1);
+            var data3 = data1.Concat(data2).Distinct();
+            var data4 = employeeResult.ElementAtOrDefault(26);
+            //Console.WriteLine(data4.EmpName);
+            //var data5 = data2.Except(data1);
+            // var data5 = employeeResult.Reverse().GroupBy(s => s.EmpName).OrderBy(s=>s.Key);
+            // var data6 = data2.Intersect(data1);
+            var data7 = employeeResult.LastOrDefault();
+           // Console.WriteLine(data7.EmpName);
+
+
+            // var data8 = employeeResult.Count(s=>s.EmpName.StartsWith("gesh"));
+            // var data9 = employeeResult.Max(s => s.Empsalary);
+            //   var data8 = data2.OrderBy(s => s.EmpId).OrderByDescending(s=>s.EmpName);
+            var data8 = data2.OrderByDescending(s => s.EmpId).ThenBy(s => s.EmpName);
+            //Console.WriteLine(data9);
+            // var data9 = data2.SequenceEqual(data8);
+            //Console.WriteLine(data9);
+            // var data9 = employeeResult.Skip(2);
+            //var data9 = employeeResult.SkipWhile(s => s.EmpName == "ganesh");
+            
+            var data9 = employeeResult.Take(4);
+            foreach (var i in data9)
+            {
+                Console.WriteLine(i.EmpId + "    \t " + i.EmpName + "" + i.city);
+            }
+        }
+
+        private static IList<Employee> GetEmployees()
+        {
+            DataTable table = new DataTable();
+           using(SqlConnection  connection = new SqlConnection(_connStr))
+            {
+                var sql = "select * from Employee";
+                using(SqlCommand cmd = new SqlCommand(sql,connection))
+                {
+                    using(SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(table);
+                    }
+
+                }
+            }
+
+            IList<Employee> employee = new List<Employee>();
+            foreach (DataRow  row in table.Rows)
+            {
+                var emp = new Employee()
+                {
+                    city = row["city"].ToString(),
+                    EmpId = int.Parse(row["empid"].ToString()),
+                    EmpName = row["empName"].ToString(),
+                    Empsalary = decimal.Parse(row["empSalary"].ToString()),
+                    Netsalary = decimal.Parse(row["netsalary"].ToString())
+
+                };
+                employee.Add(emp);
+            }
+            return employee;
+
+        }
+    }
+}

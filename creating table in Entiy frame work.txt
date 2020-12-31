@@ -1,0 +1,144 @@
+using System;
+
+namespace EntityFrameWork1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+           // new InsertingProductRecords().Display();
+            new InsertingOrderRecords().Print();
+        }
+    }
+}
+---------------------------------------
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace EntityFrameWork1
+{
+    public class Order
+    {
+        [Key]
+        public int OrderId { get; set; }
+        public string OrderName { get; set; }
+        public string Category { get; set; }
+
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
+    }
+
+}
+----------------------------------------
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace EntityFrameWork1
+{
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string ProductName { get; set;}
+
+       
+        public ICollection<Order> Orders { get; set; }
+    }
+
+}
+----------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace EntityFrameWork1
+{
+    public class InsertingOrderRecords
+    {
+        public void Print()
+        {
+            try
+            {
+                using(var context=new Context())
+                {
+                    for(int i=1; i<=15; i++)
+                    {
+                        var order = new Order();
+                        Console.WriteLine("Enter Order Name");
+                        order.OrderName = Console.ReadLine();
+                        Console.WriteLine("Enter Category name");
+                        order.Category = Console.ReadLine();
+                        Console.WriteLine("Enter Product Id");
+                        order.ProductId = int.Parse(Console.ReadLine());
+                        context.Orders.Add(order);
+                        context.SaveChanges();
+                    }
+                    
+                    Console.WriteLine("Orders table is Created");
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Oops!!An Error Occured");
+            }
+        }
+    }
+}
+========================================
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace EntityFrameWork1
+{
+    public class InsertingProductRecords
+    {
+        public void Display()
+        {
+            try
+            {
+                using (var context = new Context())
+                {
+                    for(int i=1; i<=10; i++)
+                    {
+                        var product = new Product();
+                        Console.WriteLine("Enter Product Name");
+                        product.ProductName = Console.ReadLine();
+                        context.Products.Add(product);
+                        context.SaveChanges();
+                    }
+                   
+                    Console.WriteLine("*****product table is created*****");
+                }
+            }
+            catch (Exception)
+            {
+
+                Console.WriteLine("oops error occured");
+            }
+           
+        }
+    }
+}
+========================================
+using Microsoft.EntityFrameworkCore;
+using System;
+
+namespace EntityFrameWork1
+{
+    public class Context:DbContext
+    {
+        private string ConnectionString;
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {           
+            ConnectionString = "Data Source = 192.168.50.95; Initial Catalog = vpadira; Integrated Security = True; Persist Security Info = False; Pooling = False; MultipleActiveResultSets = False; Encrypt = False; TrustServerCertificate = False";
+            optionsBuilder.UseSqlServer(ConnectionString);
+            base.OnConfiguring(optionsBuilder);
+        }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
+    }
+
+}
+========================================
