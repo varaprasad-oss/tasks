@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data.SqlClient;
+using System.Data;
+
+namespace adonetdec14
+{
+    class CreatingTableUsingDatatableClass2
+    {
+        private string connect;
+        public void CreateTable()
+        {
+            connect = "Data Source=192.168.50.95;Initial Catalog=vgudipati;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+            SqlConnection connection = new SqlConnection(connect);
+            DataTable table = new DataTable("Table created suceesfully ");
+            table.Columns.Add("Id");
+            table.Columns.Add("Name");
+            table.Columns.Add("Gender");
+            table.Rows.Add(1, "rama", "m");
+            table.Rows.Add(2, "vijay", "m");
+            table.Rows.Add(3, "mounika", "F");
+            foreach (DataRow row in table.Rows)
+            {
+                Console.WriteLine($"id:{row[0]}  Name:{row[1]}    Gender:{row[2]}");
+
+            }
+
+
+        }
+    }
+}

@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace Ado1
+{
+    public class EmployeeUsingSQLQuery
+    {
+        private string ConnectionString;
+        private SqlConnection ObjConn;
+        public EmployeeUsingSQLQuery()
+        {
+            ConnectionString = "Data Source=192.168.50.95;Initial Catalog=vpadira;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+            ObjConn = new SqlConnection(ConnectionString);
+        }
+        public void Execute()
+        {
+            Console.WriteLine("Enter Employee ID");
+            var empId = Console.ReadLine();
+            Console.WriteLine("Enter Employee Name");
+            string empName = Console.ReadLine();
+            Console.WriteLine("Enter Employee Gender");
+            string empGender = Console.ReadLine();
+            ObjConn.Open();
+            SqlCommand sqlCommand = new SqlCommand("Insert into Employee1(EmpId, EmpName, EmpGender) values(@empId, @empname,@empgender)",ObjConn);
+            sqlCommand.Parameters.AddWithValue("@empId", empId);
+            sqlCommand.Parameters.AddWithValue("@empName", empName);
+            sqlCommand.Parameters.AddWithValue("@empgender", empGender);
+            sqlCommand.ExecuteNonQuery();
+            ObjConn.Close();
+        }
+    }
+}
+---------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace Ado1
+{
+    public class EmployeeUsingStoredProcedure
+    {
+        private string connstring;
+        private SqlConnection conn;
+        public EmployeeUsingStoredProcedure()
+        {
+            connstring= "Data Source=192.168.50.95;Initial Catalog=vpadira;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+            conn = new SqlConnection(connstring);
+        }
+        public void Process()
+        {
+            try
+            {
+                Console.WriteLine("Enter Employee ID");
+                var empId = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter Employee Name");
+                string empName = Console.ReadLine();
+                Console.WriteLine("Enter Employee Gender");
+                string empGender = Console.ReadLine();
+                conn.Open();
+                //throw new Exception("Terrible error occurred");
+                SqlCommand Cmd = new SqlCommand("sp_1", conn);
+                Cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                Cmd.Parameters.AddWithValue("@empId", empId);
+                Cmd.Parameters.AddWithValue("@empName", empName);
+                Cmd.Parameters.AddWithValue("@empGender", empGender);
+                Cmd.ExecuteNonQuery();
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error occurred, error message: " + ex.Message);
+            }
+            finally
+            {
+                if (conn.State == System.Data.ConnectionState.Open)
+                    conn.Close();
+            }
+
+        }
+    }
+}
+---------------------------------------
+using System;
+
+namespace Ado1
+{
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+
+            //new EmployeeUsingSQLQuery().Execute();
+            new EmployeeUsingStoredProcedure().Process();
+        }
+    }
+}
